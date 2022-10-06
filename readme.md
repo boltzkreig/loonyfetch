@@ -5,6 +5,7 @@ loonyfetch
 ![Without_Network](Picture2.png)
 
 ***INSTALLATION***
+
 * Clone the Repository:
     > git clone https://github.com/boltzkreig/loonyfetch
 * Change working directory to `loonyfetch`
@@ -12,26 +13,32 @@ loonyfetch
 * Make Setup file an executable and Run
     > chmod +x setup && ./setup
 * Answer the simple Questionnaire
+
 ![Sample Questionnaire](questionnaire.png)
+
 NOTE: setup script is designed to make sure loonyfetch is run on bash startup. This can be undone by manually removing the following line from `.bashrc`
     > ~/loonyfetch/main
 
 ***DEPENDENCIES***
+
 Needs to be Installed
+
     * cronie
     * dnsutils for `dig`
     * lolcat
     * curl
 
 Weather Service & Moon ASCII 
+
     * wttr.in
 
 Miscelleneous
+
     * grep
     * awk
     * sed
     * ip
-	& date, whoami, free, df, uptime, ps
+    & date, whoami, free, df, uptime, ps
 
 ***TROUBLESHOOTING***
 1. The script take 400ms for initial run. It get quicker and can reach 40ms thereafter.
