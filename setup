@@ -1,0 +1,27 @@
+#!/usr/bin/bash
+
+update(){
+	output=$(curl -s wttr.in/moon@now?FQ)
+	[[ $? -eq 0 ]] && curl -s wttr.in/moon@now?FQ > ./mirage || echo "ERROR: could not fetch moon ascii-art now please run 'setup -m' sometime later"
+}
+
+[[ $1 == "-m" ]] && update && exit 0
+
+echo -ne "I will:\n\t*Set the moon update frequency\n\t*Proper triggering\n\t*Set Location for Weather Service\n*"
+read -p "May I procede? (Y/n) " response
+
+[[ $response == "n" ]] && exit 0
+
+read -p "Enter Your Geographic Location (can be changed later by altering loony.conf): " response
+echo -ne "location=$response" > ./loony.conf
+
+read -p "Frequency ([4mD[24maily/[4mH[24mourly/[4mE[24mverytime): " response
+
+[[ $response == "D" ]] && sudo cp moon /etc/cron.daily/moon
+[[ $response == "H" ]] && sudo cp moon /etc/cron.hourly/moon
+[[ $response == "E" ]] && mv main main.bak && mv main.alt main
+
+update
+chmod +x ~/loonyfetch/main
+echo "~/loonyfetch/main" >> ~/.bashrc
+echo "DONE!!!"
