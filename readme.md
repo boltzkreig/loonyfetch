@@ -7,11 +7,17 @@ loonyfetch
 ***INSTALLATION***
 
 * Clone the Repository:
-    > git clone https://github.com/boltzkreig/loonyfetch
+
+    git clone https://github.com/boltzkreig/loonyfetch
+    
 * Change working directory to `loonyfetch`
-    > cd loonyfetch
+
+     cd loonyfetch
+     
 * Make Setup file an executable and Run
-    > chmod +x setup && ./setup
+
+     chmod +x setup && ./setup
+     
 * Answer the simple Questionnaire
 
 ![Sample Questionnaire](questionnaire.png)
