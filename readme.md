@@ -3,6 +3,7 @@ loonyfetch
 **A dynamic light-weight system-information script written in bash**
 ![With_Network](Picture1.png)
 ![Without_Network](Picture2.png)
+
 ***INSTALLATION***
 * Clone the Repository:
     > git clone https://github.com/boltzkreig/loonyfetch
