@@ -17,6 +17,7 @@ loonyfetch
 ![Sample Questionnaire](questionnaire.png)
 
 NOTE: setup script is designed to make sure loonyfetch is run on bash startup. This can be undone by manually removing the following line from `.bashrc`
+
     > ~/loonyfetch/main
 
 ***DEPENDENCIES***
