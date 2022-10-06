@@ -46,4 +46,5 @@ Miscelleneous
    > location=NULL
 3. If there is doubt about the Moon ASCII to be out-dated run the following command:
    > ~/loony/setup -m
+   
    Also the date and time of last update is stamped black-on-black below the ASCII Art.
