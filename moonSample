@@ -1,0 +1,6 @@
+#! /usr/bin/sh
+
+set -e
+curl -s wttr.in/moon@now?FQ > FILL/pic
+stamp=$(date)
+echo [40m[30m$stamp[0m >> FILL/pic

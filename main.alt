@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 
-source loony.conf
+source ~/loonyfetch/loony.conf
 dis="0C"
 isConnected=0
 end(){
@@ -20,7 +20,7 @@ Connected(){
 }
 
 PUB_IP=$(echo "Public IP: "; dig +short +timeout=1 myip.opendns.com @resolver1.opendns.com -4 2> /dev/null) 
-[[ $? -eq 0 ]] && Connected || (lolcat ~/loonyfetch/macle && echo [$(< macle wc -l)A[9999999D[1m)
+[[ $? -eq 0 ]] && Connected || (lolcat ~/loonyfetch/macle && echo [$(< ~/loonyfetch/macle wc -l)A[9999999D[1m)
 
 echo [26A[9999999D1m 
 DATE=$(date)
@@ -35,7 +35,7 @@ echo [$dis$RAM
 DISK=$(df -h 2>/dev/null | awk '/\/$/ {print "Used Space: " $5 " ---- " $3"/"$4}')
 echo [$dis$DISK
 
-UP=$(uptime -p | sed -e {s/up/Uptime:/})
+UP=$(uptime -p | sed -e 's/up/Uptime:/')
 echo [$dis$UP
 
 CPU=$(ps -aux | awk '{sum+=$3} END{print "CPU usage: " sum"%"}')
@@ -44,7 +44,7 @@ echo [$dis$CPU
 PRI_IP=$(ip -br a | grep 'UP' | awk '{print "Private IP: " $3 }' )
 echo [$dis$PRI_IP
 
-[[ $location != "NULL" ]] && WEATHER=$(curl -s wttr.in/$location?format=4 | sed 's/+/ /g')
+[[ $location != "NULL" || isConnected -eq 1 ]] && WEATHER=$(curl -s wttr.in/$location?format=4 | sed 's/+/ /g')
 [[ isConnected -eq 1 ]] && echo [$dis$PUB_IP && echo [$dis$WEATHER
 
 end

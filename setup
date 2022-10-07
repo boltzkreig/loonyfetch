@@ -13,7 +13,10 @@ read -p "May I procede? (Y/n) " response
 [[ $response == "n" ]] && exit 0
 
 read -p "Enter Your Geographic Location (can be changed later by altering loony.conf): " response
-echo -ne "location=$response" > ./loony.conf
+response=$(echo $response | tr -s '[:blank:][:punct:]' '+')
+echo -ne "location=\"$response\"" > ./loony.conf
+
+awk -v HOME=$HOME '{gsub(/FILL/,HOME); print}' ./moonSample > ./moon
 
 read -p "Frequency ([4mD[24maily/[4mH[24mourly/[4mE[24mverytime): " response
 
