@@ -21,7 +21,7 @@ Connected(){
 PUB_IP=$(echo "Public IP: "; dig +short +timeout=1 myip.opendns.com @resolver1.opendns.com -4 2> /dev/null) 
 [[ $? -eq 0 ]] && Connected || (lolcat ~/loonyfetch/macle && echo [$(< ~/loonyfetch/macle wc -l)A[9999999D[1m)
 
-echo [26A[9999999D1m 
+echo [26A[9999999D[1m 
 DATE=$(date)
 echo [$dis[4m$DATE[24m
 
