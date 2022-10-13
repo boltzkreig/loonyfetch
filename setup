@@ -2,7 +2,13 @@
 
 update(){
 	output=$(curl -s wttr.in/moon@now?FQ)
-	[[ $? -eq 0 ]] && curl -s wttr.in/moon@now?FQ > ./mirage || echo "ERROR: could not fetch moon ascii-art now please run 'setup -m' sometime later"
+	if [ $? -eq 0 ]; then 
+		curl -s wttr.in/moon@now?FQ > ./mirage
+		stamp=$(date)
+		echo [40m[30m$stamp[0m >> ./mirage
+	else
+		echo "ERROR: could not fetch moon ascii-art now please run 'setup -m' sometime later"
+	fi
 }
 
 [[ $1 == "-m" ]] && update && exit 0

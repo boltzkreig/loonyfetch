@@ -11,7 +11,7 @@ end(){
 
 Connected(){
 	isConnected=1
-	curl -s wttr.in/moon@now?FQ > /home/bolt/loonyfetch/mirage
+	curl -s wttr.in/moon@now?FQ > $HOME/loonyfetch/mirage
 	dis=$(grep [A-Z] ~/loonyfetch/mirage | sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' | awk -v num=0 '{num=0; for(i=1;i<=length($0);i++) \
 		{if (substr($0,i,1)=="F" || substr($0,i,1)=="L") { print num-1; exit} else if (substr($0,i,1)=="\t") \
 		{num+=4} else {num++}}}')
@@ -22,9 +22,8 @@ Connected(){
 PUB_IP=$(echo "Public IP: "; dig +short +timeout=1 myip.opendns.com @resolver1.opendns.com -4 2> /dev/null) 
 [[ $? -eq 0 ]] && Connected || (lolcat ~/loonyfetch/macle && echo [$(< ~/loonyfetch/macle wc -l)A[9999999D[1m)
 
-echo [26A[9999999D1m 
 DATE=$(date)
-echo [$dis[4m$DATE[24m
+echo [25A[9999999D[1m[$dis[4m$DATE[24m
 
 NAME=$(echo -n $(whoami)@; cat /etc/hostname) 
 echo [$dis$NAME"[0m"
@@ -44,7 +43,7 @@ echo [$dis$CPU
 PRI_IP=$(ip -br a | grep 'UP' | awk '{print "Private IP: " $3 }' )
 echo [$dis$PRI_IP
 
-[[ $location != "NULL" || isConnected -eq 1 ]] && WEATHER=$(curl -s wttr.in/$location?format=4 | sed 's/+/ /g')
+[[ $location != "NULL" && isConnected -eq 1 ]] && WEATHER=$(curl -s wttr.in/$location?format=4 | sed 's/+/ /g')
 [[ isConnected -eq 1 ]] && echo [$dis$PUB_IP && echo [$dis$WEATHER
 
 end

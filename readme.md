@@ -50,8 +50,8 @@ Miscelleneous
 ***TROUBLESHOOTING***
 1. The script take 400ms for initial run. It get quicker and can reach 40ms thereafter.
 2. The script can be made faster by disabling weather report by setting the following line in `loony.conf` :
-   > location=NULL
+    > location='NULL'
 3. If there is doubt about the Moon ASCII to be out-dated run the following command:
-   > ~/loony/setup -m
+    > cd ~loonyfetch/ && ./setup -m
    
    Also the date and time of last update is stamped black-on-black below the ASCII Art.
