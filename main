@@ -1,52 +1,68 @@
 #! /usr/bin/bash
+source "$HOME/loonyfetch/loony.conf"
 
-source ~/loonyfetch/loony.conf
 dis="0C"
 isConnected=0
+
 end(){
-	for ((i=0; i<=16 ; i++)) do
+	for ((i=0; i<=14 ; i++)) do
 		echo [60C
 	done
 }
 #num+=8			num-3
 Connected(){
 	isConnected=1
-
-	dis=$(grep [A-Z] ~/loonyfetch/mirage | sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' | awk -v num=0 '{num=0; for(i=1;i<=length($0);i++) \
-		{if (substr($0,i,1)=="F" || substr($0,i,1)=="L") { print num-5; exit} else if (substr($0,i,1)=="\t") \
-		{num+=6} else {num++}}}')
+	dis=$(grep -m 1 'F\|L' $HOME/loonyfetch/mirage | sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' | cut -f1 | awk '{ print length + 6 }' )
 	[[ $dis -ge 25 ]] && dis+="C" || dis="25C"
-	cat ~/loonyfetch/mirage
+	cat $HOME/loonyfetch/mirage
+   echo [26A[9999999D
 }
 
 #clear
-PUB_IP=$(echo "Public IP: "; dig +short +timeout=1 myip.opendns.com @resolver1.opendns.com -4 2> /dev/null) 
-[[ $? -eq 0 ]] && Connected || (lolcat ~/loonyfetch/macle && echo [$(< ~/loonyfetch/macle wc -l)A[9999999D[1m)
+if [[ $public_ip != "FALSE" ]]
+then
+   if PUB_IP=$(echo -n "Public IP: "; dig +short +timeout=1 myip.opendns.com @resolver1.opendns.com -4 2> /dev/null)
+   then
+	   Connected
+   fi
+else
+	   lolcat $HOME/loonyfetch/macle && echo ["$(< $HOME/loonyfetch/macle wc -l )"A[9999999D[1m
+fi
+
 
 DATE=$(date)
-echo [25A[9999999D[1m[$dis[4m$DATE[24m
+echo "[1m[$dis[4m$DATE[24m"
 
-NAME=$(echo -n $(whoami)@$(echo $HOSTNAME) $(tty | cut -d"/" -f3-))
-echo [$dis$NAME"[0m"
+NAME=$(echo -n "$(whoami)"@"$HOSTNAME" "$(tty | cut -d"/" -f3-)")
+echo ["$dis""$NAME""[0m"
 
-RAM=$(free | awk '/Mem/ {print "Free Memory:",($7/$2)*100"%"}' && free -h | awk '/Mem/ {print " ---- " $7"/"$2}')
-echo [$dis$RAM
+RAM=$(free | awk '/Mem/ {print "Free Memory:",($7/$2)*100"%"}' \
+	&& free -h | awk '/Mem/ {print " ---- " $7"/"$2}')
+echo ["$dis"$RAM
 
 DISK=$(df -h 2>/dev/null | awk '/\/$/ {print "Used Space: " $5 " ---- " $3"/"$2}')
-echo [$dis$DISK
+echo ["$dis""$DISK"
 
 UP=$(uptime -p | sed -e 's/up/Uptime:/')
-echo [$dis$UP
+echo ["$dis""$UP"
 
-BAT=$(cat /sys/class/power_supply/BAT0/capacity | awk '{print("Battery Level: " $1 "%")}' && [[ $(cat /sys/class/power_supply/AC/online) == 1 ]] && echo "🗲" )
-echo [$dis$BAT
+if [[ $battery == "TRUE" ]]
+then
+	BAT=$(awk '{print("Battery Level: " $1 "%")}' /sys/class/power_supply/BAT0/capacity \
+	&& upower -i $(upower -e | grep 'battery') | awk '/time to empty/{print "("$4" "$5 "🔋)" }' \
+	&& [[ $(cat /sys/class/power_supply/AC/online) == 1 ]] \
+	&& echo "🗲" )
+	
+	echo ["$dis"$BAT
+fi
+PRI_IP=$(ip -br a | grep 'UP' | awk '{print "Private IP: " $3}' )
+#PRI_IP=$(ip -br a | grep 'UP' | awk '{print "Private IP: " $3" "$4 }' )
+echo ["$dis""$PRI_IP"
 
-#PRI_IP=$(ip -br a | grep 'UP' | awk '{print "Private IP: " $3}' )
-PRI_IP=$(ip -br a | grep 'UP' | awk '{print "Private IP: " $3" "$4 }' )
-echo [$dis$PRI_IP
+[[ $location != "NULL" && isConnected -eq 1 ]] \
+	&& WEATHER=$(curl -s wttr.in/"$location"?format=4 | sed 's/+/ /g')
 
-[[ $location != "NULL" && isConnected -eq 1 ]] && WEATHER=$(curl -s wttr.in/$location?format=4 | sed 's/+/ /g')
-[[ isConnected -eq 1 ]] && echo [$dis$PUB_IP && echo [$dis$WEATHER
+[[ isConnected -eq 1 ]] && echo ["$dis""$PUB_IP" && echo ["$dis""$WEATHER"
 
 end
 echo [?25h[?7h

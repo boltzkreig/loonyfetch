@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
 update(){
-	output=$(curl -s wttr.in/moon@now?FQ)
-	if [ $? -eq 0 ]; then 
-		curl -s wttr.in/moon@now?FQ > ./mirage
+	if curl -s wttr.in/moon@now?FQ  > $HOME/loonyfetch/mirage
+	then 
 		stamp=$(date)
-		echo [40m[30m$stamp[0m >> ./mirage
+		echo [40m[30m"$stamp"[0m >> $HOME/loonyfetch/mirage
+		echo "New Lunar Graphics Fetched!!"
 	else
 		echo "ERROR: could not fetch moon ascii-art now please run 'setup -m' sometime later"
 	fi
@@ -13,24 +13,29 @@ update(){
 
 [[ $1 == "-m" ]] && update && exit 0
 
-echo -ne "I will:\n\t*Set the moon update frequency\n\t*Proper triggering\n\t*Set Location for Weather Service\n*"
-read -p "May I procede? (Y/n) " response
+echo -ne "I will:\n\t*Set the moon update frequency\n\t*Proper triggering by appending to bashrc\n\t*Set Location for Weather Service\n*"
+read -r -p "May I procede? (Y/n) " response
 
 [[ $response == "n" ]] && exit 0
 
-read -p "Enter Your Geographic Location (can be changed later by altering loony.conf): " response
-response=$(echo $response | tr -s '[:blank:][:punct:]' '+')
-echo -ne "location=\"$response\"" > ./loony.conf
+read -r -p "Enter Your Geographic Location (can be changed later by altering loony.conf ): " response
+response=$(echo "$response" | tr -s '[:blank:][:punct:]' '+')
+if [[ ${#response} -eq 0 ]]; then
+	response="NULL"
+fi
+echo -ne "location=\"$response\"" >> ./loony.conf
 
-awk -v HOME=$HOME '{gsub(/FILL/,HOME); print}' ./moonSample > ./moon
+awk -v HOME="$HOME" '{gsub(/FILL/,HOME); print}' ./moonSample > ./moon
 
-read -p "Frequency ([4mD[24maily/[4mH[24mourly/[4mE[24mverytime): " response
+read -r -p "Frequency ([4mD[24maily/[4mH[24mourly/[4mE[24mverytime): " response
 
 [[ $response == "D" ]] && sudo cp moon /etc/cron.daily/moon
 [[ $response == "H" ]] && sudo cp moon /etc/cron.hourly/moon
-[[ $response == "E" ]] && mv main main.bak && mv main.alt main
+[[ $response == "E" ]] && cp main main.bak && sed -n -i 'p;13a "curl -s wttr.in/moon@now?FQ > $HOME/loonyfetch/mirage"' main
+
+type lolcat crontab curl dig upower  2>&1 > /dev/null | awk 'BEGIN{FS=":"}; {print "The script might want to use:" $4}'
 
 update
 chmod +x ~/loonyfetch/main
-echo "~/loonyfetch/main" >> ~/.bashrc
+echo "$HOME/loonyfetch/main" >> ~/.bashrc
 echo "DONE!!!"
