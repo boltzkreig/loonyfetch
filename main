@@ -3,9 +3,10 @@ source "$HOME/loonyfetch/loony.conf"
 
 dis="0C"
 isConnected=0
+lines=0
 
 end(){
-	for ((i=0; i<=14 ; i++)) do
+	for ((i=0; i<=lines ; i++)) do
 		echo [60C
 	done
 }
@@ -15,54 +16,74 @@ Connected(){
 	dis=$(grep -m 1 'F\|L' $HOME/loonyfetch/mirage | sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' | cut -f1 | awk '{ print length + 6 }' )
 	[[ $dis -ge 25 ]] && dis+="C" || dis="25C"
 	cat $HOME/loonyfetch/mirage
+	lines=$(wc -l $HOME/loonyfetch/mirage | cut -d" " -f1)
    echo [26A[9999999D
 }
 
 #clear
 if [[ $public_ip != "FALSE" ]]
 then
-   if PUB_IP=$(echo -n "Public IP: "; dig +short +timeout=1 myip.opendns.com @resolver1.opendns.com -4 2> /dev/null)
+   if PUB_IP=$(echo "Public IP: "; dig +short +timeout=1 myip.opendns.com @resolver1.opendns.com -4 2> /dev/null)
    then
+	   ((lines--))
 	   Connected
    fi
-else
-	   lolcat $HOME/loonyfetch/macle && echo ["$(< $HOME/loonyfetch/macle wc -l )"A[9999999D[1m
 fi
 
+if [[ isConnected -eq 0 ]] 
+then
+	lolcat $HOME/loonyfetch/macle && \
+	lines=$(wc -l $HOME/loonyfetch/macle | cut -d" " -f1) && \
+	echo "[$(< "$HOME/loonyfetch/macle" wc -l )A[9999999D[1m"
+fi
 
 DATE=$(date)
-echo "[1m[$dis[4m$DATE[24m"
+((lines--))
+echo [1m["$dis"[4m"$DATE"[24m
 
-NAME=$(echo -n "$(whoami)"@"$HOSTNAME" "$(tty | cut -d"/" -f3-)")
+NAME=$(echo -n "$(whoami)@$(hostname) $(tty | cut -d"/" -f3-)")
+((lines--))
 echo ["$dis""$NAME""[0m"
 
-RAM=$(free | awk '/Mem/ {print "Free Memory:",($7/$2)*100"%"}' \
-	&& free -h | awk '/Mem/ {print " ---- " $7"/"$2}')
-echo ["$dis"$RAM
+RAM=$(free -h | awk '/Mem/ {print "Free Memory:",($7/$2)*100"% ---- " $7"/"$2}')
+((lines--))
+echo ["$dis""$RAM"
 
 DISK=$(df -h 2>/dev/null | awk '/\/$/ {print "Used Space: " $5 " ---- " $3"/"$2}')
+((lines--))
 echo ["$dis""$DISK"
 
+if [[ $sensors == "TRUE" ]]
+then
+	SEN=$(sensors | awk '/CPU/ {print "CPU:"$2} /RPM/ {print "Fan:"$3$4} ')
+	((lines--))
+	echo [$dis$SEN
+fi
+
 UP=$(uptime -p | sed -e 's/up/Uptime:/')
+((lines--))
 echo ["$dis""$UP"
 
 if [[ $battery == "TRUE" ]]
 then
 	BAT=$(awk '{print("Battery Level: " $1 "%")}' /sys/class/power_supply/BAT0/capacity \
-	&& upower -i $(upower -e | grep 'battery') | awk '/time to empty/{print "("$4" "$5 "🔋)" }' \
+	&& upower -i "$(upower -e | grep 'battery')" | awk '/time to empty/{print "("$4" "$5 "🔋)" }' \
 	&& [[ $(cat /sys/class/power_supply/AC/online) == 1 ]] \
 	&& echo "🗲" )
-	
-	echo ["$dis"$BAT
+	((lines--))
+	echo [$dis$BAT
 fi
+
 PRI_IP=$(ip -br a | grep 'UP' | awk '{print "Private IP: " $3}' )
+((lines--))
 #PRI_IP=$(ip -br a | grep 'UP' | awk '{print "Private IP: " $3" "$4 }' )
 echo ["$dis""$PRI_IP"
 
-[[ $location != "NULL" && isConnected -eq 1 ]] \
-	&& WEATHER=$(curl -s wttr.in/"$location"?format=4 | sed 's/+/ /g')
+[[ $location != "NULL" && isConnected -eq 1 ]] && \
+	WEATHER=$(curl -s wttr.in/"$location"?format=4 | sed 's/+/ /g') && \
+	((lines--))
 
-[[ isConnected -eq 1 ]] && echo ["$dis""$PUB_IP" && echo ["$dis""$WEATHER"
+[[ isConnected -eq 1 ]] && echo [$dis$PUB_IP && echo [$dis$WEATHER
 
 end
 echo [?25h[?7h

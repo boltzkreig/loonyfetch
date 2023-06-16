@@ -3,6 +3,7 @@ loonyfetch
 **A dynamic light-weight system-information script written in bash**
 ![With_Network](Picture1.png)
 ![Without_Network](Picture2.png)
+Also available as `POSIX` compliant script
 
 ***INSTALLATION***
 
@@ -34,6 +35,7 @@ Needs to be Installed
     * dnsutils for `dig`
     * lolcat
     * curl
+	* upower
 
 Weather Service & Moon ASCII 
 

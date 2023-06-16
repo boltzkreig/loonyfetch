@@ -23,7 +23,7 @@ response=$(echo "$response" | tr -s '[:blank:][:punct:]' '+')
 if [[ ${#response} -eq 0 ]]; then
 	response="NULL"
 fi
-echo -ne "location=\"$response\"" >> ./loony.conf
+echo -ne "\nlocation=\"$response\"" >> ./loony.conf
 
 awk -v HOME="$HOME" '{gsub(/FILL/,HOME); print}' ./moonSample > ./moon
 
@@ -31,7 +31,7 @@ read -r -p "Frequency ([4mD[24maily/[4mH[24mourly/[4mE[24mverytime): " res
 
 [[ $response == "D" ]] && sudo cp moon /etc/cron.daily/moon
 [[ $response == "H" ]] && sudo cp moon /etc/cron.hourly/moon
-[[ $response == "E" ]] && cp main main.bak && sed -n -i 'p;13a "curl -s wttr.in/moon@now?FQ > $HOME/loonyfetch/mirage"' main
+[[ $response == "E" ]] && cp main main.bak && sed -n -i 'p;13a curl -s wttr.in/moon@now?FQ > $HOME/loonyfetch/mirage' main
 
 type lolcat crontab curl dig upower  2>&1 > /dev/null | awk 'BEGIN{FS=":"}; {print "The script might want to use:" $4}'
 
